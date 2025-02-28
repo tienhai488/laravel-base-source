@@ -1,0 +1,29 @@
+# Template PHP Build
+
+# This template allows you to validate your PHP application.
+# The workflow allows running tests and code linting on the default branch.
+
+image: kobunaski/khgc-base-php8.2:latest
+
+definitions:
+  steps:
+    - step: &deploy-dev
+          name: "Deployment"
+          deployment: develop
+          script:
+            - envoy run deploy --commit="$CI_COMMIT_SHA" --branch=develop --env=develop
+
+    - step: &deploy-staging
+          name: "Deploying Staging"
+          deployment: staging
+          script:
+            - envoy run deploy --commit="$CI_COMMIT_SHA" --branch=staging --env=staging
+
+pipelines:
+  branches:
+    develop:
+      - step: *deploy-dev
+    feature/SLP-cicd:
+      - step: *deploy-dev
+    staging:
+      - step: *deploy-staging
